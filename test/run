@@ -10,13 +10,13 @@
 test -n $IMAGE_NAME \
   -a -n $VERSION
 
-test_dir="$(readlink -zf $(dirname "${BASH_SOURCE[0]}"))"
-image_dir=$(readlink -zf ${test_dir}/..)
+test_dir="$(dirname "${BASH_SOURCE[0]}")"
+image_dir="${test_dir}/.."
 cid_file=$(mktemp -u --suffix=.cid)
 
 # Since we built the candidate image locally, we don't want S2I attempt to pull
 # it from Docker hub
-s2i_args="--force-pull=false "
+s2i_args="--pull-policy=never "
 
 # TODO: This should be part of the image metadata
 test_port=8080
@@ -154,7 +154,7 @@ test_scl_usage() {
 validate_default_value() {
   local label=$1
 
-  IFS=':' read -a label_vals <<< $(docker inspect -f "{{index .Config.Labels \"$label\"}}" ${IMAGE_NAME}) 
+  IFS=':' read -a label_vals <<< $(docker inspect -f "{{index .Config.Labels \"$label\"}}" ${IMAGE_NAME})
   label_var=${label_vals[0]}
   default_label_val=${label_vals[1]}
 

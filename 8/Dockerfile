@@ -33,17 +33,18 @@ LABEL summary="$SUMMARY" \
       com.redhat.deployments-dir="/opt/app-root/src" \
       com.redhat.dev-mode.port="DEBUG_PORT:5858"\
       com.redhat.component="rh-nodejs8-docker" \
-      name="centos/nodejs-8-centos7" \
-      version="1" \
-      maintainer="SoftwareCollections.org <sclorg@redhat.com>"
+      name="bucharestgold/nodejs-8-centos7" \
+      version="8.9.1" \
+      maintainer="Bucharest Gold <lball@redhat.com>"
 
-RUN yum install -y centos-release-scl-rh && \
-    yum remove -y rh-nodejs6\* && \
+RUN yum install -y https://github.com/bucharest-gold/node-rpm/releases/download/v8.9.1/rhoar-nodejs-8.9.1-1.el7.centos.x86_64.rpm && \
+    yum install -y https://github.com/bucharest-gold/node-rpm/releases/download/v8.9.1/npm-5.5.1-1.8.9.1.1.el7.centos.x86_64.rpm && \
+    npm install -g nodemon && \
+    yum install -y centos-release-scl-rh && \
+    yum remove -y rh-nodejs6\* > /dev/null && \
     yum-config-manager --enable centos-sclo-rh-testing && \
-    INSTALL_PKGS="rh-nodejs8 rh-nodejs8-npm rh-nodejs8-nodejs-nodemon nss_wrapper" && \
     ln -s /usr/lib/node_modules/nodemon/bin/nodemon.js /usr/bin/nodemon && \
-    yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
-    rpm -V $INSTALL_PKGS && \
+    yum install -y --setopt=tsflags=nodocs nss_wrapper && \
     yum clean all -y
 
 # Copy the S2I scripts from the specific language image to $STI_SCRIPTS_PATH
